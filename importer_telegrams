@@ -1,24 +1,102 @@
+import asyncio
 import json
 from telethon import TelegramClient
+from telethon.errors import SessionPasswordNeededError
 from telethon.tl.types import PeerChannel
 
-# Настройки клиента
+# Замените эти значения на ваши
+# API ID и API Hash вы можете получить на https://my.telegram.org/
 api_id = '25290973'
 api_hash = '35b85b1a818c842836e7f5fb0bdcadb7'
 phone_number = '+79935474292'
 
-client = TelegramClient('session_name', api_id, api_hash)
+# URL или username чата
+chat_username = 'https://t.me/you_biohackages'
+
+
+async def export_chat_data(chat_entity):
+    """
+    Основная функция для экспорта данных чата в структурированный JSON.
+    """
+    messages_data = []
+
+    print(f"Начинаем экспорт данных из чата: {chat_entity.title}")
+
+    # Итерируемся по всем сообщениям в чате
+    async for message in client.iter_messages(chat_entity, reverse=True):
+
+        # Проверяем, есть ли у сообщения текст
+        if not message.text:
+            continue
+
+        # Получаем информацию об отправителе
+        sender_name = "Неизвестный"
+        sender_id = None
+        if message.sender:
+            sender_entity = await client.get_entity(message.sender)
+            sender_id = sender_entity.id
+            if hasattr(sender_entity, 'title'):
+                sender_name = sender_entity.title
+            else:
+                sender_name = sender_entity.first_name
+                if sender_entity.last_name:
+                    sender_name += f" {sender_entity.last_name}"
+
+        # Обрабатываем ответы на сообщения
+        reply_to_id = message.reply_to_msg_id
+
+        # Создаем словарь для сообщения с нужными данными
+        message_dict = {
+            'id': message.id,
+            'text': message.text,
+            'author_name': sender_name,
+            'author_id': sender_id,
+            'date': message.date.isoformat(),
+            'reply_to_id': reply_to_id
+        }
+
+        messages_data.append(message_dict)
+
+    # Сохраняем данные в JSON-файл
+    with open('exported_chat_data.json', 'w', encoding='utf-8') as f:
+        json.dump(messages_data, f, ensure_ascii=False, indent=4)
+
+    print(
+        f"Экспорт завершен. Данные сохранены в файл 'exported_chat_data.json'")
+    print(f"Общее количество сообщений: {len(messages_data)}")
+
 
 async def main():
+    """
+    Главная функция для авторизации и запуска экспорта.
+    """
+    global client
+    client = TelegramClient(phone_number, api_id, api_hash,
+                            system_version='4.16.30-vxCUSTOM')
+
     await client.start()
-    chat = await client.get_entity('https://t.me/pokolenie_charity')
-    messages = []
 
-    async for message in client.iter_messages(chat):
-        messages.append(message.text)
-    with open('chat_messages.json', 'w', encoding='utf-8') as f:
-        json.dump(messages, f, ensure_ascii=False, indent=4)
-    print("ГОТОВО")
+    # Авторизация, если ещё не выполнен вход
+    if not await client.is_user_authorized():
+        await client.send_code_request(phone_number)
+        try:
+            await client.sign_in(phone_number, input('Введите код: '))
+        except SessionPasswordNeededError:
+            await client.sign_in(password=input('Введите 2FA пароль: '))
 
-with client:
-    client.loop.run_until_complete(main())
+    print("Авторизация прошла успешно.")
+
+    try:
+        chat_entity = await client.get_entity(chat_username)
+        await export_chat_data(chat_entity)
+    except ValueError as e:
+        print(
+            f"Ошибка: Не удалось найти чат '{chat_username}'. Проверьте URL или username. {e}")
+    except Exception as e:
+        print(f"Произошла непредвиденная ошибка: {e}")
+    finally:
+        await client.disconnect()
+
+
+if __name__ == '__main__':
+    asyncio.run(main())

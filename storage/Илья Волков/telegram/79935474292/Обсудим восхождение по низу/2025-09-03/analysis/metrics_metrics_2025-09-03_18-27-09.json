@@ -1,0 +1,433 @@
+{
+  "summary": {
+    "total_users": 6,
+    "total_interactions": 12,
+    "total_messages": 6
+  },
+  "activity_analysis": {
+    "top_active_users": [
+      {
+        "user_id": "anon_None",
+        "username": "unknown_author",
+        "value": 2
+      },
+      {
+        "user_id": 1168809026,
+        "username": "Алена Морозный Кактус",
+        "value": 1
+      },
+      {
+        "user_id": 818566781,
+        "username": "Макс Волчков",
+        "value": 1
+      },
+      {
+        "user_id": 1854484216,
+        "username": "Максим Уралов",
+        "value": 1
+      },
+      {
+        "user_id": 881552689,
+        "username": "Гоша",
+        "value": 1
+      },
+      {
+        "user_id": 2420380898,
+        "username": "Восхождение по низу🧿",
+        "value": 0
+      }
+    ],
+    "top_popular_users": [
+      {
+        "user_id": 2420380898,
+        "username": "Восхождение по низу🧿",
+        "value": 5
+      },
+      {
+        "user_id": 818566781,
+        "username": "Макс Волчков",
+        "value": 1
+      },
+      {
+        "user_id": "anon_None",
+        "username": "unknown_author",
+        "value": 0
+      },
+      {
+        "user_id": 1168809026,
+        "username": "Алена Морозный Кактус",
+        "value": 0
+      },
+      {
+        "user_id": 1854484216,
+        "username": "Максим Уралов",
+        "value": 0
+      },
+      {
+        "user_id": 881552689,
+        "username": "Гоша",
+        "value": 0
+      }
+    ],
+    "top_engaged_users": [
+      {
+        "user_id": 2420380898,
+        "username": "Восхождение по низу🧿",
+        "value": 5
+      },
+      {
+        "user_id": "anon_None",
+        "username": "unknown_author",
+        "value": 2
+      },
+      {
+        "user_id": 818566781,
+        "username": "Макс Волчков",
+        "value": 2
+      },
+      {
+        "user_id": 1168809026,
+        "username": "Алена Морозный Кактус",
+        "value": 1
+      },
+      {
+        "user_id": 1854484216,
+        "username": "Максим Уралов",
+        "value": 1
+      },
+      {
+        "user_id": 881552689,
+        "username": "Гоша",
+        "value": 1
+      }
+    ]
+  },
+  "reply_analysis": {
+    "top_repliers": [
+      {
+        "user_id": "anon_None",
+        "username": "unknown_author",
+        "value": 2
+      },
+      {
+        "user_id": 818566781,
+        "username": "Макс Волчков",
+        "value": 1
+      },
+      {
+        "user_id": 1168809026,
+        "username": "Алена Морозный Кактус",
+        "value": 1
+      },
+      {
+        "user_id": 1854484216,
+        "username": "Максим Уралов",
+        "value": 1
+      },
+      {
+        "user_id": 881552689,
+        "username": "Гоша",
+        "value": 1
+      },
+      {
+        "user_id": 2420380898,
+        "username": "Восхождение по низу🧿",
+        "value": 0
+      }
+    ],
+    "top_replied_to": [
+      {
+        "user_id": 2420380898,
+        "username": "Восхождение по низу🧿",
+        "value": 5
+      },
+      {
+        "user_id": 818566781,
+        "username": "Макс Волчков",
+        "value": 1
+      },
+      {
+        "user_id": "anon_None",
+        "username": "unknown_author",
+        "value": 0
+      },
+      {
+        "user_id": 1168809026,
+        "username": "Алена Морозный Кактус",
+        "value": 0
+      },
+      {
+        "user_id": 1854484216,
+        "username": "Максим Уралов",
+        "value": 0
+      },
+      {
+        "user_id": 881552689,
+        "username": "Гоша",
+        "value": 0
+      }
+    ],
+    "total_replies": 6
+  },
+  "question_analysis": {
+    "top_question_askers": [],
+    "total_questions": 0
+  },
+  "centrality_metrics": {
+    "degree_centrality": [
+      {
+        "user_id": 2420380898,
+        "username": "Восхождение по низу🧿",
+        "value": 1.0
+      },
+      {
+        "user_id": "anon_None",
+        "username": "unknown_author",
+        "value": 0.4
+      },
+      {
+        "user_id": 818566781,
+        "username": "Макс Волчков",
+        "value": 0.4
+      },
+      {
+        "user_id": 1168809026,
+        "username": "Алена Морозный Кактус",
+        "value": 0.2
+      },
+      {
+        "user_id": 1854484216,
+        "username": "Максим Уралов",
+        "value": 0.2
+      },
+      {
+        "user_id": 881552689,
+        "username": "Гоша",
+        "value": 0.2
+      }
+    ],
+    "betweenness_centrality": [
+      {
+        "user_id": 2420380898,
+        "username": "Восхождение по низу🧿",
+        "value": 0.0
+      },
+      {
+        "user_id": "anon_None",
+        "username": "unknown_author",
+        "value": 0.0
+      },
+      {
+        "user_id": 1168809026,
+        "username": "Алена Морозный Кактус",
+        "value": 0.0
+      },
+      {
+        "user_id": 818566781,
+        "username": "Макс Волчков",
+        "value": 0.0
+      },
+      {
+        "user_id": 1854484216,
+        "username": "Максим Уралов",
+        "value": 0.0
+      },
+      {
+        "user_id": 881552689,
+        "username": "Гоша",
+        "value": 0.0
+      }
+    ],
+    "closeness_centrality": [
+      {
+        "user_id": 2420380898,
+        "username": "Восхождение по низу🧿",
+        "value": 1.0
+      },
+      {
+        "user_id": 818566781,
+        "username": "Макс Волчков",
+        "value": 0.2
+      },
+      {
+        "user_id": "anon_None",
+        "username": "unknown_author",
+        "value": 0.0
+      },
+      {
+        "user_id": 1168809026,
+        "username": "Алена Морозный Кактус",
+        "value": 0.0
+      },
+      {
+        "user_id": 1854484216,
+        "username": "Максим Уралов",
+        "value": 0.0
+      },
+      {
+        "user_id": 881552689,
+        "username": "Гоша",
+        "value": 0.0
+      }
+    ],
+    "eigenvector_centrality": [
+      {
+        "user_id": 2420380898,
+        "username": "Восхождение по низу🧿",
+        "value": 0.9999941154967342
+      },
+      {
+        "user_id": 818566781,
+        "username": "Макс Волчков",
+        "value": 0.0034305728406984976
+      },
+      {
+        "user_id": "anon_None",
+        "username": "unknown_author",
+        "value": 5.95585562621266e-06
+      },
+      {
+        "user_id": 1168809026,
+        "username": "Алена Морозный Кактус",
+        "value": 5.95585562621266e-06
+      },
+      {
+        "user_id": 1854484216,
+        "username": "Максим Уралов",
+        "value": 5.95585562621266e-06
+      },
+      {
+        "user_id": 881552689,
+        "username": "Гоша",
+        "value": 5.95585562621266e-06
+      }
+    ]
+  },
+  "opinion_leaders": {
+    "top_active_writers": [
+      {
+        "user_id": "anon_None",
+        "username": "unknown_author",
+        "value": 2
+      },
+      {
+        "user_id": 1168809026,
+        "username": "Алена Морозный Кактус",
+        "value": 1
+      },
+      {
+        "user_id": 818566781,
+        "username": "Макс Волчков",
+        "value": 1
+      },
+      {
+        "user_id": 1854484216,
+        "username": "Максим Уралов",
+        "value": 1
+      },
+      {
+        "user_id": 881552689,
+        "username": "Гоша",
+        "value": 1
+      },
+      {
+        "user_id": 2420380898,
+        "username": "Восхождение по низу🧿",
+        "value": 0
+      }
+    ],
+    "top_popular_users": [
+      {
+        "user_id": 2420380898,
+        "username": "Восхождение по низу🧿",
+        "value": 5
+      },
+      {
+        "user_id": 818566781,
+        "username": "Макс Волчков",
+        "value": 1
+      },
+      {
+        "user_id": "anon_None",
+        "username": "unknown_author",
+        "value": 0
+      },
+      {
+        "user_id": 1168809026,
+        "username": "Алена Морозный Кактус",
+        "value": 0
+      },
+      {
+        "user_id": 1854484216,
+        "username": "Максим Уралов",
+        "value": 0
+      },
+      {
+        "user_id": 881552689,
+        "username": "Гоша",
+        "value": 0
+      }
+    ],
+    "most_influential": 2420380898,
+    "top_betweenness_leaders": [
+      {
+        "user_id": 2420380898,
+        "username": "Восхождение по низу🧿",
+        "value": 0.0
+      },
+      {
+        "user_id": "anon_None",
+        "username": "unknown_author",
+        "value": 0.0
+      },
+      {
+        "user_id": 1168809026,
+        "username": "Алена Морозный Кактус",
+        "value": 0.0
+      },
+      {
+        "user_id": 818566781,
+        "username": "Макс Волчков",
+        "value": 0.0
+      },
+      {
+        "user_id": 1854484216,
+        "username": "Максим Уралов",
+        "value": 0.0
+      }
+    ],
+    "network_hubs": [
+      {
+        "user_id": 2420380898,
+        "username": "Восхождение по низу🧿",
+        "value": 1.0
+      },
+      {
+        "user_id": "anon_None",
+        "username": "unknown_author",
+        "value": 0.4
+      },
+      {
+        "user_id": 818566781,
+        "username": "Макс Волчков",
+        "value": 0.4
+      },
+      {
+        "user_id": 1168809026,
+        "username": "Алена Морозный Кактус",
+        "value": 0.2
+      },
+      {
+        "user_id": 1854484216,
+        "username": "Максим Уралов",
+        "value": 0.2
+      }
+    ]
+  },
+  "network_properties": {
+    "density": 0.2,
+    "average_clustering": 0.35000000000000003,
+    "is_connected": true,
+    "number_of_components": 1
+  }
+}

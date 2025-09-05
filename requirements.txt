@@ -1,0 +1,18 @@
+# Основные зависимости
+loguru>=0.7.2
+python-dotenv>=1.0.1
+telethon>=1.36.0
+typing_extensions>=4.0.0
+
+# Зависимости для анализа и визуализации графа
+pyvis>=0.3.2
+networkx>=3.2.1
+
+# Зависимость для генерации PDF-отчетов
+reportlab>=4.0.9
+
+# Важные зависимости Telethon (обязательные)
+pyaes
+rsa
+requests
+urllib3

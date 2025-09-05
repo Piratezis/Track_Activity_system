@@ -1,0 +1,205 @@
+# unload_chat.py
+import asyncio
+import argparse
+from pathlib import Path
+from loguru import logger
+from scr.config import (
+    SOCIAL_NETWORK_DICT,
+    LOG_ROTATION_SIZE,
+    TELEGRAM_KEY,
+    STORAGE_DIR,
+    LogMessages,
+    FileTemplates,
+    CommandLineArgument,
+)
+
+from scr.models import User, TelegramAccount, TelegramChat, Mistaken
+from scr.manager import FileManager
+import sys
+
+# Настройка логгера
+logger.add(FileTemplates.UNLOAD_OF_CHATS_BASE_NAME_LOG, rotation=LOG_ROTATION_SIZE)
+
+
+async def unload_chat_data(
+    user_system_name: str,
+    api_id: int,
+    api_hash: str,
+    social_account_name: str,
+    chat_name: str,
+    phone_number: str,
+    output_dir: str = None,
+):
+    """
+    Выгружает данные из указанного чата
+    """
+    logger.info(LogMessages.INFO_DATA_START.format(chat_name=chat_name))
+
+    # Создаем пользователя
+    user = User(name=user_system_name, phone_numbers=[])
+
+    # Базовая директория для хранения
+    base_storage_dir = Path(output_dir) if output_dir else Path.cwd() / STORAGE_DIR
+    file_manager = FileManager(base_storage_dir=base_storage_dir)
+
+    # Создаем папку для пользователя
+    user_dir_path = file_manager.create_object_dir(
+        obj_dir_name=user.name, parent_dir=file_manager.base_storage_dir
+    )
+    user.storage_path = user_dir_path
+
+    if social_account_name == SOCIAL_NETWORK_DICT.get(TELEGRAM_KEY):
+        # Инициализация Telegram аккаунта
+        telegram_account = TelegramAccount(
+            user=user, phone_number=phone_number, api_id=api_id, api_hash=api_hash
+        )
+
+    else:
+        logger.warning(LogMessages.WARNING_NOT_ACCESS_SOCIAL_NETWORK)
+
+        return None
+    # Если номера не было, то добавляем пользователю
+    if phone_number not in user.get_social_accounts():
+        user.add_phone_number(phone_number)
+
+    try:
+        # Подключаемся к Telegram
+        await telegram_account.client.start(phone=telegram_account.phone_number)
+        logger.info(
+            LogMessages.INFO_CONNECT_SUCCESS + SOCIAL_NETWORK_DICT.get(TELEGRAM_KEY)
+        )
+
+        # Получаем список чатов
+        all_chats = await telegram_account.get_chats()
+
+        # Ищем нужный чат
+        chat_id = None
+        if chat_name in all_chats:
+            chat_id = all_chats[chat_name]
+            logger.info(
+                LogMessages.INFO_CHAT_FOUND.format(chat_name=chat_name, chat_id=chat_id)
+            )
+        else:
+            logger.warning(
+                LogMessages.WARNING_CHAT_NOT_FOUND.format(
+                    chat_name=chat_name, available_chats=list(all_chats.keys())
+                )
+            )
+            return None
+
+        # Создаем объект чата и инициализируем
+        chat = TelegramChat(
+            name=chat_name, chat_id=chat_id, social_account=telegram_account
+        )
+        await chat.initialize()
+
+        # Создаем директорию для чата
+        chat.storage_path = file_manager.create_object_dir(
+            obj_dir_name=chat.name, parent_dir=telegram_account.storage_path
+        )
+
+        # Получаем и сохраняем сообщения
+        messages = await chat.get_messages()
+        file_path = file_manager.save_chat_json(chat=chat, data=messages)
+        logger.info(LogMessages.INFO_DATA_SAVED.format(file_path=file_path))
+
+        return file_path
+
+    except Exception as e:
+        logger.exception(LogMessages.ERROR_DATA_UNLOADING.format(e))
+        return None
+    finally:
+        await telegram_account.client.disconnect()
+
+
+def main():
+    parser = argparse.ArgumentParser(
+        description=LogMessages.HELP_TELEGRAM_DESCRIPTION_UNLOADING_DATA,
+        formatter_class=argparse.MetavarTypeHelpFormatter,
+    )
+
+    parser.add_argument(
+        CommandLineArgument.USER_SYSTEM_NAME,
+        type=str,
+        required=True,
+        help=LogMessages.HELP_TELEGRAM_USER_SYSTEM_NAME,
+    )
+
+    parser.add_argument(
+        CommandLineArgument.API_HASH,
+        type=str,
+        required=True,
+        help=LogMessages.HELP_TELEGRAM_API_HASH,
+    )
+    parser.add_argument(
+        CommandLineArgument.API_ID,
+        type=int,
+        required=True,
+        help=LogMessages.HELP_TELEGRAM_API_ID,
+    )
+
+    parser.add_argument(
+        CommandLineArgument.SOCIAL_ACCOUNT_NAME,
+        type=str,
+        required=True,
+        help=LogMessages.HELP_TELEGRAM_SOCIAL_ACCOUNT_NAME,
+    )
+    parser.add_argument(
+        CommandLineArgument.CHAT_NAME,
+        type=str,
+        required=True,
+        help=LogMessages.HELP_TELEGRAM_CHAT_NAME,
+    )
+    parser.add_argument(
+        CommandLineArgument.PHONE,
+        type=str,
+        required=True,
+        help=LogMessages.HELP_TELEGRAM_PHONE,
+    )
+    parser.add_argument(
+        CommandLineArgument.OUTPUT, type=str, help=LogMessages.HELP_TELEGRAM_OUTPUT
+    )
+
+    args = parser.parse_args()
+    # Комплексная проверка всех аргументов
+    try:
+        Mistaken.validate_all(args.user_system_name, str, "user_system_name")
+        Mistaken.validate_all(args.api_id, int, "api_id")
+        Mistaken.validate_all(args.api_hash, str, "api_hash")
+        Mistaken.validate_all(args.social_account_name, str, "social_account_name")
+        Mistaken.validate_all(args.chat_name, str, "chat_name")
+        Mistaken.validate_all(args.phone, str, "phone")
+
+        # Дополнительные бизнес-проверки
+        if args.social_account_name.lower() not in SOCIAL_NETWORK_DICT:
+            raise ValueError(
+                LogMessages.ERROR_NETWORK_SOCIAL.format(
+                    social_account_name=args.social_account_name
+                )
+            )
+
+    except (ValueError, TypeError) as e:
+        logger.error(LogMessages.ERROR_VALIDATION_ARGUMENTS.format(error=e))
+        sys.exit(1)
+
+    # Запускаем выгрузку
+    result = asyncio.run(
+        unload_chat_data(
+            user_system_name=args.user_system_name,
+            api_id=args.api_id,
+            api_hash=args.api_hash,
+            social_account_name=args.social_account_name,
+            chat_name=args.chat_name,
+            phone_number=args.phone,
+            output_dir=args.output,
+        )
+    )
+
+    if result:
+        return result
+    else:
+        return None
+
+
+if __name__ == "__main__":
+    main()

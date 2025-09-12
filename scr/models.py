@@ -117,102 +117,110 @@ class User:
 
 class Mistaken:
     """
-    Универсальный класс для обработки ошибок и валидации
+    Universal class for error handling and validation
     """
 
     @staticmethod
-    def validate_type(obj: any, expected_type: type) -> None:
+    def validate_type(obj: typing.Any,
+                      expected_type: type,
+                      param_name: str = LogMessagesMistaken.PARAM_NAME_DEFAULT)\
+            -> None:
         """
-        Проверяет тип объекта и выбрасывает TypeError
+        Checks the object type and throws a TypeError
 
         Args:
-            obj: Проверяемый объект
-            expected_type: Ожидаемый тип данных
-            param_name: Имя параметра для сообщения об ошибке (опционально)
+            obj: The object being checked
+            expected_type: Expected data type
+            param_name: The name of the parameter for the error message (optional)
 
         Raises:
-            TypeError: Если тип объекта не соответствует ожидаемому
+            TypeError: If the object type does not match what is expected.
         """
         if not isinstance(obj, expected_type):
-            error_msg = LogMessages.ERROR_TYPE_MISMATCH.format(
-                expected_type=expected_type.__name__, actual_type=type(obj).__name__
-            )
+            error_msg = LogMessagesMistaken.ERROR_TYPE_MISMATCH.format(
+                expected_type=expected_type.__name__,
+                actual_type=type(obj).__name__,
+                param_name=param_name)
+
             raise TypeError(error_msg)
 
     @staticmethod
-    def validate_exists(obj: any, param_name: str = None) -> None:
+    def validate_exists(obj: typing.Any,
+                        param_name: str = LogMessagesMistaken.PARAM_NAME_DEFAULT)\
+            -> None:
         """
-        Проверяет существование объекта и выбрасывает ValueError
+        Checks the existence of an object and its emptiness and throws a ValueError
 
         Args:
-            obj: Проверяемый объект
-            param_name: Имя параметра для сообщения об ошибке (опционально)
+            obj: The object being checked
+            param_name: The name of the parameter for the error message (optional)
 
         Raises:
-            ValueError: Если объект None, пустая строка или пустая коллекция
+            ValueError: If the object is None, an empty string or an empty collection
         """
         # Проверка на None
         if obj is None:
             error_msg = (
-                LogMessages.ERROR_NONE_PARAM.format(param_name=param_name)
-                if param_name
-                else LogMessages.ERROR_NONE_OBJECT
-            )
+                    LogMessagesMistaken.ERROR_NONE_OBJECT.format(param_name=param_name)
+                )
             raise ValueError(error_msg)
 
         # Проверка пустой строки
         if isinstance(obj, str) and not obj.strip():
             error_msg = (
-                LogMessages.ERROR_EMPTY_STRING_PARAM.format(param_name=param_name)
-                if param_name
-                else LogMessages.ERROR_EMPTY_STRING
+                LogMessagesMistaken.ERROR_EMPTY_STRING.format(param_name=param_name)
             )
             raise ValueError(error_msg)
 
         # Проверка пустой коллекции
-        if hasattr(obj, "__len__") and len(obj) == 0:
+        if hasattr(obj, PythonSettings.DUNDER_LEN) and len(obj) == 0:
             error_msg = (
-                LogMessages.ERROR_EMPTY_COLLECTION_PARAM.format(param_name=param_name)
-                if param_name
-                else LogMessages.ERROR_EMPTY_COLLECTION
+                LogMessagesMistaken.ERROR_EMPTY_COLLECTION.format(
+                    param_name=param_name)
             )
             raise ValueError(error_msg)
 
     @staticmethod
-    def validate_all(obj: any, expected_type: type, param_name: str = None) -> None:
-        """
-        Комплексная проверка типа и существования объекта
+    def validate_all(obj: typing.Any,
+                     expected_type: type,
+                     param_name: str = LogMessagesMistaken.PARAM_NAME_DEFAULT)\
+            -> None:
 
-        Args:
-            obj: Проверяемый объект
-            expected_type: Ожидаемый тип данных
-            param_name: Имя параметра для сообщения об ошибке (опционально)
-
-        Raises:
-            ValueError: Если объект не существует
-            TypeError: Если тип объекта не соответствует ожидаемому
         """
+        Comprehensive verification of the type and existence of an object
+
+                Args:
+                    obj: The object being checked
+                    expected_type: Expected data type
+                    param_name: The name of the parameter for the error message (optional)
+
+                Raises:
+                    ValueError: If the object does not exist
+                    TypeError: If the object type does not match what is expected.
+                """
+        Mistaken.validate_type(obj, expected_type, param_name)
         Mistaken.validate_exists(obj, param_name)
-        Mistaken.validate_type(obj, expected_type)
 
     @staticmethod
-    def handle_exception(func: callable, *args, **kwargs) -> any:
+    def handle_exception(func: callable,
+                         *args,
+                         **kwargs) -> typing.Any:
         """
-        Обертка для безопасного выполнения функций с обработкой исключений
+        Wrapper for safe execution of functions with exception handling
 
         Args:
-            func: Функция для выполнения
-            *args: Аргументы функции
-            **kwargs: Именованные аргументы функции
+            func: A function to perform
+            *args: Function arguments
+            **kwargs: Named function arguments
 
         Returns:
-            Результат выполнения функции или None при ошибке
+            The result of the function execution or None in case of an error
         """
         try:
             return func(*args, **kwargs)
         except Exception as e:
             logger.error(
-                LogMessages.ERROR_FUNCTION_EXECUTION.format(
+                LogMessagesMistaken.ERROR_FUNCTION_EXECUTION.format(
                     function_name=func.__name__, error=e
                 )
             )

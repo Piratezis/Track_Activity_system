@@ -18,7 +18,8 @@ from scr.manager import FileManager
 import sys
 
 # Настройка логгера
-logger.add(FileTemplates.UNLOAD_OF_CHATS_BASE_NAME_LOG, rotation=LOG_ROTATION_SIZE)
+logger.add(FileTemplates.UNLOAD_OF_CHATS_BASE_NAME_LOG,
+           rotation=LOG_ROTATION_SIZE)
 
 
 async def unload_chat_data(
@@ -31,7 +32,7 @@ async def unload_chat_data(
     output_dir: str = None,
 ):
     """
-    Выгружает данные из указанного чата
+    Uploads data from the specified chat
     """
     logger.info(LogMessages.INFO_DATA_START.format(chat_name=chat_name))
 
@@ -39,7 +40,8 @@ async def unload_chat_data(
     user = User(name=user_system_name, phone_numbers=[])
 
     # Базовая директория для хранения
-    base_storage_dir = Path(output_dir) if output_dir else Path.cwd() / STORAGE_DIR
+    base_storage_dir = Path(output_dir) if output_dir else\
+        Path.cwd() / STORAGE_DIR
     file_manager = FileManager(base_storage_dir=base_storage_dir)
 
     # Создаем папку для пользователя
@@ -51,7 +53,10 @@ async def unload_chat_data(
     if social_account_name == SOCIAL_NETWORK_DICT.get(TELEGRAM_KEY):
         # Инициализация Telegram аккаунта
         telegram_account = TelegramAccount(
-            user=user, phone_number=phone_number, api_id=api_id, api_hash=api_hash
+            user=user,
+            phone_number=phone_number,
+            api_id=api_id,
+            api_hash=api_hash
         )
 
     else:
@@ -65,42 +70,44 @@ async def unload_chat_data(
     try:
         # Подключаемся к Telegram
         await telegram_account.client.start(phone=telegram_account.phone_number)
-        logger.info(
-            LogMessages.INFO_CONNECT_SUCCESS + SOCIAL_NETWORK_DICT.get(TELEGRAM_KEY)
-        )
 
         # Получаем список чатов
         all_chats = await telegram_account.get_chats()
 
         # Ищем нужный чат
-        chat_id = None
         if chat_name in all_chats:
             chat_id = all_chats[chat_name]
             logger.info(
-                LogMessages.INFO_CHAT_FOUND.format(chat_name=chat_name, chat_id=chat_id)
+                LogMessages.INFO_CHAT_FOUND.format(chat_name=chat_name,
+                                                   chat_id=chat_id)
             )
         else:
             logger.warning(
                 LogMessages.WARNING_CHAT_NOT_FOUND.format(
-                    chat_name=chat_name, available_chats=list(all_chats.keys())
+                    chat_name=chat_name,
+                    available_chats=list(all_chats.keys())
                 )
             )
             return None
 
         # Создаем объект чата и инициализируем
         chat = TelegramChat(
-            name=chat_name, chat_id=chat_id, social_account=telegram_account
+            name=chat_name,
+            chat_id=chat_id,
+            social_account=telegram_account
         )
         await chat.initialize()
 
         # Создаем директорию для чата
         chat.storage_path = file_manager.create_object_dir(
-            obj_dir_name=chat.name, parent_dir=telegram_account.storage_path
+            obj_dir_name=chat.name,
+            parent_dir=telegram_account.storage_path
         )
 
         # Получаем и сохраняем сообщения
         messages = await chat.get_messages()
-        file_path = file_manager.save_chat_json(chat=chat, data=messages)
+        file_path = file_manager.save_chat_json(chat=chat,
+                                                data=messages)
         logger.info(LogMessages.INFO_DATA_SAVED.format(file_path=file_path))
 
         return file_path
@@ -114,7 +121,7 @@ async def unload_chat_data(
 
 def main():
     parser = argparse.ArgumentParser(
-        description=LogMessages.HELP_TELEGRAM_DESCRIPTION_UNLOADING_DATA,
+        description=LogMessages.HELP_TELEGRAM_INFO_UNLOADING_DATA,
         formatter_class=argparse.MetavarTypeHelpFormatter,
     )
 
@@ -157,7 +164,9 @@ def main():
         help=LogMessages.HELP_TELEGRAM_PHONE,
     )
     parser.add_argument(
-        CommandLineArgument.OUTPUT, type=str, help=LogMessages.HELP_TELEGRAM_OUTPUT
+        CommandLineArgument.OUTPUT,
+        type=str,
+        help=LogMessages.HELP_TELEGRAM_OUTPUT
     )
 
     args = parser.parse_args()
@@ -165,8 +174,11 @@ def main():
     try:
         Mistaken.validate_all(args.user_system_name, str, "user_system_name")
         Mistaken.validate_all(args.api_id, int, "api_id")
+
         Mistaken.validate_all(args.api_hash, str, "api_hash")
-        Mistaken.validate_all(args.social_account_name, str, "social_account_name")
+        Mistaken.validate_all(args.social_account_name, str,
+                              "social_account_name")
+
         Mistaken.validate_all(args.chat_name, str, "chat_name")
         Mistaken.validate_all(args.phone, str, "phone")
 
@@ -191,7 +203,7 @@ def main():
             social_account_name=args.social_account_name,
             chat_name=args.chat_name,
             phone_number=args.phone,
-            output_dir=args.output,
+            output_dir=args.output
         )
     )
 
